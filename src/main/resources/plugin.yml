@@ -1,0 +1,8 @@
+name: DungeonQuesting
+version: ${project.version}
+main: com.github.rainestormee.dungeonquesting.DungeonQuesting
+api-version: 1.13
+commands:
+  dungeonquest:
+    description: "Questing the dungeons!"
+    aliases: ["dq"]
