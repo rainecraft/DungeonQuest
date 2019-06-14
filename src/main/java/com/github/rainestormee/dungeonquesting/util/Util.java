@@ -30,11 +30,11 @@ public class Util {
     }
 
     public static void setChunk(Chunk chunk, List<Block> blocks) {
-        blocks.stream().forEach(block -> {
+        blocks.forEach(block -> {
             int x = block.getX();
             int y = block.getY();
             int z = block.getZ();
-            chunk.getBlock(x, y, z).setType(block.getType());
+            chunk.getBlock(x, y, z).setBlockData(block.getBlockData());
         });
     }
 }

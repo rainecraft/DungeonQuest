@@ -10,7 +10,7 @@ public class CheckChunkCommand extends MinecraftCommand {
     @Override
     public void execute(Player player, String args) {
         if (Util.checkChunk(player)) {
-            player.sendMessage("This would be cool to portal and shit from");
+            player.sendMessage("this would be cool to portal and shit from");
         } else {
             player.sendMessage("nah you cant do this one fam");
         }
