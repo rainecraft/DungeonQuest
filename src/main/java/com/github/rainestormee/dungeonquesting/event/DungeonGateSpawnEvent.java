@@ -1,17 +1,29 @@
 package com.github.rainestormee.dungeonquesting.event;
 
+import com.github.rainestormee.dungeonquesting.util.Dungeon;
 import com.github.rainestormee.dungeonquesting.util.DungeonHandler;
 import com.github.rainestormee.dungeonquesting.util.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DungeonGateSpawnEvent implements Listener {
+
+    private Plugin plugin;
+
+    public DungeonGateSpawnEvent(Plugin main) {
+        this.plugin = main;
+    }
 
     @EventHandler
     public void dungeonDateSpawnEvent(PlayerDropItemEvent event) {
@@ -23,8 +35,13 @@ public class DungeonGateSpawnEvent implements Listener {
         }
         event.getItemDrop().remove();
         event.getPlayer().sendMessage("This is a definite thing so lets go boi!");
-        new DungeonHandler().startDungeon(loc.getChunk(), new ArrayList<UUID>() {{
-            add(event.getPlayer().getUniqueId());
-        }}, event.getPlayer().getLocation().getBlockY() - 65);
+        Dungeon dungeon = new DungeonHandler().createDungeon(loc.getChunk());
+        dungeon.spawnGate(event.getPlayer().getLocation().getBlockY());
+        event.getPlayer().getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            dungeon.addPlayers(Arrays.stream(loc.getChunk().getEntities())
+                    .filter(e -> e.getType().equals(EntityType.PLAYER))
+                    .map(Entity::getUniqueId).collect(Collectors.toList()));
+            dungeon.start();
+        }, 30 * 1000L);
     }
 }

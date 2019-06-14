@@ -1,6 +1,10 @@
 package com.github.rainestormee.dungeonquesting.util;
 
+import com.github.rainestormee.dungeonquesting.DungeonQuesting;
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,24 +14,29 @@ import java.util.UUID;
 public class Dungeon {
 
     private Chunk chunk;
-    private List<UUID> players;
+    private List<Player> players;
     private long dungeonID;
     private boolean completed;
     private boolean started;
+    private World dungeonWorld;
+    private DungeonQuesting main;
 
-    Dungeon(Chunk realWorld, List<UUID> players, long dungeonID) {
+    Dungeon(Chunk realWorld, List<Player> players, long dungeonID, DungeonQuesting main) {
         this.chunk = realWorld;
         this.players = players;
         this.dungeonID = dungeonID;
         this.completed = false;
         this.started = false;
+        this.main = main;
+        World template = main.getServer().getWorld("dungeon-template");
+        dungeonWorld = main.getServer().createWorld(new WorldCreator("dungeon-" + dungeonID).copy(template));
     }
 
-    Dungeon(Chunk realWorld) {
-        this(realWorld, new ArrayList<>(), new Random().nextLong());
+    Dungeon(Chunk realWorld, DungeonQuesting main) {
+        this(realWorld, new ArrayList<>(), new Random().nextLong(), main);
     }
 
-    public void addPlayers(List<UUID> players) {
+    public void addPlayers(List<Player> players) {
         this.players = players;
     }
 
@@ -40,7 +49,7 @@ public class Dungeon {
         return chunk;
     }
 
-    public List<UUID> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -54,6 +63,9 @@ public class Dungeon {
 
     public void start() {
         // TODO: Teleport players to the multi-verse containing the dungeon.
+        players.stream().forEach(u -> {
+            u.sendMessage("Teleporting you to another world!");
+        });
         this.started = true;
     }
 
